@@ -1,4 +1,4 @@
-== WikiLink Application - Neo4j & Wikipedia graph visualizatopm
+== WikiLink Application - Neo4j & Wikipedia graph visualization
 
 === Stack
 
