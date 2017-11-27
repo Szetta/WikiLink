@@ -264,18 +264,6 @@ ON CREATE SET p.countParentCat = coalesce(p.countParentCat, 0) + 1
 WITH DISTINCT c
 SET c.pagesFetched = true;
 
-match (c:Category), (p:Page) 
-where c.pageID = p.pageID and c.pageID > 0 and p.imgFetched = false
-with c
-merge (p2:Page {pageID: c.pageID})-[:IN_CATEGORY]->(c)
-on match set p2.imgFetched = true, 
-	p2.pageID = c.pageID,
-    p2.imgSrc = c.imgSrc,
-	p2.imgHeigth = c.imgHeigth,
-	p2.imgWidth = c.imgWidth;
-
-MATCH (c:Category) WHERE c.pagesFetched = false and c.level >= 0 and c.level < 5 SET c.pagesFetched = true;
-	
 MATCH (c:Category {level: 0, imgFetched: false})
 CALL apoc.load.json('https://' + apoc.text.urlencode(c.language)  + '.wikipedia.org/w/api.php?format=json&action=query&titles=' + apoc.text.urlencode(c.catName) + '&prop=pageimages&pithumbsize=100')
 YIELD value as results 
@@ -334,7 +322,7 @@ ON MATCH SET c2.imgFetched = true,
     c2.imgSrc = imgSource,
 	c2.imgHeigth = imgHeigth,
 	c2.imgWidth = imgWidth
-WITH DISTINCT c SET c.imgFetched = true; 	
+WITH DISTINCT c SET c.imgFetched = true; 
 	
 MATCH (c:Category {level: 4, imgFetched: false})
 CALL apoc.load.json('https://' + apoc.text.urlencode(c.language)  + '.wikipedia.org/w/api.php?format=json&action=query&titles=' + apoc.text.urlencode(c.catName) + '&prop=pageimages&pithumbsize=100')
@@ -352,6 +340,18 @@ ON MATCH SET c2.imgFetched = true,
 WITH DISTINCT c SET c.imgFetched = true; 	
 
 MATCH (c:Category) WHERE c.imgFetched = false and c.level > 0 and c.level < 5 SET c.imgFetched = true;	
+
+match (c:Category), (p:Page) 
+where c.pageID = p.pageID and c.pageID > 0 and p.imgFetched = false
+with c
+merge (p2:Page {pageID: c.pageID})-[:IN_CATEGORY]->(c)
+on match set p2.imgFetched = true, 
+	p2.pageID = c.pageID,
+    p2.imgSrc = c.imgSrc,
+	p2.imgHeigth = c.imgHeigth,
+	p2.imgWidth = c.imgWidth;
+
+MATCH (c:Category) WHERE c.pagesFetched = false and c.level >= 0 and c.level < 5 SET c.pagesFetched = true;
 
 //Commented due could take long time on big categories, it works	
 //MATCH (c:Page {imgFetched: false})
