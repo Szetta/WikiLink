@@ -66,12 +66,9 @@ def contact():
 #            return 'Please fill in all fields <p><a href="/contact">Try Again!!!</a></p>'
 	         return render_template('contact.html')	
         else:
-            msg = Message("WikiLink - Message from your visitor : " + str(request.form['name']),
-                          sender= 'contact@wikilink.org',
-                          recipients=['fdez.daniel@gmail.com', 'sirrembrandt@gmail.com'])
-#            msg = Message("Message from your visitor" + str(form.getvalue('name')),
-#                          sender= 'xxx@mail.com',
-#                          recipients=['xxx@mail.com', 'yyyy@mail.com'])						  
+            msg = Message("Message from your visitor" + str(form.getvalue('name')),
+                          sender= 'xxx@mail.com',
+                          recipients=['xxx@mail.com', 'yyyy@mail.com'])						  
             msg.body = """
             From: %s <%s>,
 			
